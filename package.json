@@ -1,38 +1,34 @@
 {
-  "name": "zeroflow",
-  "version": "0.0.0",
-  "private": true,
+  "name": "beeflow-backend",
+  "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "test": "vite --mode test",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "node dist/index.js",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "build": "tsc",
+    "test": "jest"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
-    "axios": "^1.4.0",
-    "js-cookie": "^3.0.5",
-    "lodash": "^4.17.21",
-    "lodash-es": "^4.17.21",
-    "moment": "^2.29.4",
-    "nprogress": "^0.2.0",
-    "pinia": "^2.1.3",
-    "validator": "^13.11.0",
-    "vite-plugin-svg-icons": "^2.0.1",
-    "vue": "^3.2.47",
-    "vue-router": "^4.2.2",
-    "vue3-dragscroll": "^1.0.2",
-    "vue3-print-nb": "^0.1.4",
-    "vuedraggable": "^4.1.0"
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@arco-design/web-vue": "^2.53.2",
-    "@vitejs/plugin-vue": "^4.5.0",
-    "terser": "^5.24.0",
-    "unplugin-auto-import": "^0.16.6",
-    "unplugin-vue-components": "^0.25.1",
-    "vite": "^4.5.0",
-    "vite-plugin-html": "^3.2.0",
-    "typescript": "^4.9.5",
-    "less": "^4.1.3"
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/node": "^20.8.10",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.0"
   }
 }

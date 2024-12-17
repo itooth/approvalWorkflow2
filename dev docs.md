@@ -1,254 +1,202 @@
 # BeeFlow Node.js Backend Development Plan
 
-## 1. Project Setup & Architecture (Week 1)
+## Project Background & Goals
 
-### 1.1 Initial Setup
-- Initialize Node.js project with TypeScript
-- Setup development environment (ESLint, Prettier, etc.)
-- Configure project structure
-- Setup development database (MongoDB/PostgreSQL)
+### Background
+BeeFlow is an open-source workflow automation system with an existing Vue.js frontend. The frontend provides:
+- Visual workflow designer
+- Form designer
+- Approval process management
+- Organization structure management
 
-### 1.2 Core Architecture
-```typescript
-project/
-├── src/
-│   ├── api/           # API routes
-│   ├── config/        # Configuration files
-│   ├── controllers/   # Request handlers
-│   ├── models/        # Data models
-│   ├── services/      # Business logic
-│   ├── types/         # TypeScript types/interfaces
-│   └── utils/         # Utility functions
-├── tests/             # Test files
-└── package.json
+The original implementation uses Java + Activiti 7 for the backend. This project aims to create a more lightweight and developer-friendly alternative using Node.js.
+
+### Goals
+1. **Simplification**: Create a more approachable backend implementation compared to the Java version
+2. **Modern Stack**: Utilize modern Node.js practices and TypeScript for better developer experience
+3. **API Compatibility**: Maintain compatibility with the existing Vue.js frontend
+4. **Flexibility**: Support both simple and complex workflow scenarios
+5. **Performance**: Ensure efficient handling of workflow processes
+6. **Extensibility**: Make it easy to add new workflow node types and business rules
+
+## Development Checklist
+
+### 1. Project Setup ✅
+- [x] Initialize Node.js project with TypeScript
+- [x] Configure MongoDB connection
+- [x] Set up basic Express server
+- [x] Implement error handling utilities
+- [x] Configure environment variables
+✅ Tests: Server starts, connects to DB, basic route works
+
+### 2. Authentication System ✅
+- [x] User model implementation
+- [x] JWT authentication middleware
+- [x] Login endpoint
+- [x] Register endpoint
+- [x] Get current user endpoint
+✅ Tests: All auth endpoints working, JWT validation successful
+
+### 3. Organization Structure ✅
+#### 3.1 Department Management ✅
+- [x] Department model with hierarchy
+- [x] CRUD operations for departments
+- [x] Department hierarchy endpoints
+- [x] Department-based authorization
+✅ Tests: Department CRUD, hierarchy operations verified
+
+#### 3.2 Role Management ✅
+- [x] Role model with permissions
+- [x] CRUD operations for roles
+- [x] Role assignment to users
+- [x] Role-based authorization
+✅ Tests: Role CRUD, assignment operations verified
+
+#### 3.3 User-Department Management ✅
+- [x] User-Department relationship model
+- [x] Department assignment endpoints
+- [x] Department-based user queries
+- [x] Hierarchical department queries
+✅ Tests: User-department operations verified
+
+### 4. Workflow System
+#### 4.1 Workflow Definition ✅
+- [x] Workflow model schema
+- [x] Node type definitions (approval, copy, condition)
+- [x] CRUD operations for workflows
+- [x] Workflow validation rules
+- [x] Workflow grouping support
+✅ Tests: All tests passing
+- Basic workflow creation
+- Complex workflow validation
+- Group management
+- Error handling
+
+#### 4.2 Form System ✅
+- [x] Form model schema
+- [x] Form field definitions
+- [x] CRUD operations for forms
+- [x] Form validation rules
+- [x] Support for all field types:
+  - Text fields (single line, multi line)
+  - Number and money fields
+  - Choice fields (single, multiple)
+  - Date fields
+  - Detail fields (nested forms)
+  - File fields (picture, attachment)
+  - Organization fields (department, employee)
+✅ Tests: All tests passing
+- Basic form operations
+- Complex form validation
+- Field type validations
+- Error handling
+
+#### 4.3 Process Execution (Next Up)
+- [ ] Task model schema
+- [ ] Workflow instance handling
+- [ ] Task assignment logic
+- [ ] Approval/rejection handling
+🔄 Tests: Process execution flow tests
+
+### 5. Frontend Integration
+- [ ] API response format alignment
+- [ ] Error handling standardization
+- [ ] Frontend compatibility testing
+🔄 Tests: End-to-end testing with frontend
+
+## API Endpoints
+
+### Authentication ✅
+```
+POST   /api/v1/auth/login
+POST   /api/v1/auth/register
+GET    /api/v1/auth/me
 ```
 
-### 1.3 Base Dependencies
-```json
-{
-  "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^7.0.0",
-    "jsonwebtoken": "^9.0.0",
-    "bcrypt": "^5.1.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "zod": "^3.21.4"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0",
-    "@types/express": "^4.17.17",
-    "jest": "^29.5.0",
-    "ts-jest": "^29.1.0"
-  }
-}
+### Organization ✅
+```
+# Departments
+GET    /api/v1/departments
+POST   /api/v1/departments
+GET    /api/v1/departments/:id
+PUT    /api/v1/departments/:id
+DELETE /api/v1/departments/:id
+GET    /api/v1/departments/hierarchy
+
+# Roles
+GET    /api/v1/roles
+POST   /api/v1/roles
+GET    /api/v1/roles/:id
+PUT    /api/v1/roles/:id
+DELETE /api/v1/roles/:id
+POST   /api/v1/roles/assign
+POST   /api/v1/roles/remove
+
+# Users & Departments
+GET    /api/v1/users
+GET    /api/v1/users/:id
+PUT    /api/v1/users/:id
+GET    /api/v1/users/department/:departmentId
+GET    /api/v1/users/department/:departmentId/hierarchy
+POST   /api/v1/users/assign-department
+POST   /api/v1/users/remove-department
 ```
 
-## 2. Core Features Implementation (Week 2-3)
+### Workflow System
+```
+# Workflow Groups ✅
+GET    /api/v1/workflows/groups
+POST   /api/v1/workflows/groups
+GET    /api/v1/workflows/groups/:id
+PUT    /api/v1/workflows/groups/:id
+DELETE /api/v1/workflows/groups/:id
+POST   /api/v1/workflows/groups/reorder
 
-### 2.1 Authentication System
-- User authentication (JWT)
-- Role-based authorization
-- Session management
+# Workflow Definitions ✅
+GET    /api/v1/workflows
+POST   /api/v1/workflows
+GET    /api/v1/workflows/:id
+PUT    /api/v1/workflows/:id
+DELETE /api/v1/workflows/:id
+GET    /api/v1/workflows/group/:groupId
 
-### 2.2 Organization Structure
-```typescript
-// Core models
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  roles: Role[];
-  departmentId: string;
-}
+# Forms ✅
+GET    /api/v1/forms
+POST   /api/v1/forms
+GET    /api/v1/forms/:id
+PUT    /api/v1/forms/:id
+DELETE /api/v1/forms/:id
+GET    /api/v1/forms/workflow/:workflowId
 
-interface Department {
-  id: string;
-  name: string;
-  parentId: string;
-  leaderId: string;
-}
-
-interface Role {
-  id: string;
-  name: string;
-  permissions: string[];
-}
+# Tasks (To Implement)
+POST   /api/v1/workflows/:id/start
+GET    /api/v1/tasks
+GET    /api/v1/tasks/:id
+POST   /api/v1/tasks/:id/approve
+POST   /api/v1/tasks/:id/reject
+POST   /api/v1/tasks/:id/comment
 ```
 
-### 2.3 Basic APIs
-- User CRUD
-- Department CRUD
-- Role management
-- Basic error handling middleware
+## Current Status 🎯
 
-## 3. Workflow Engine Implementation (Week 4-5)
+1. ✅ Organization System (Sections 1-3)
+   - Authentication
+   - Department Management
+   - Role Management
+   - User-Department Relationships
 
-### 3.1 Core Workflow Models
-```typescript
-interface WorkflowDefinition {
-  id: string;
-  name: string;
-  description: string;
-  nodes: WorkflowNode[];
-  edges: WorkflowEdge[];
-  version: number;
-}
+2. 🏗️ Workflow System (Section 4)
+   - ✅ Workflow Definition (4.1)
+   - ✅ Form System (4.2)
+   - ⏳ Process Execution (4.3) - Next Up
 
-interface WorkflowInstance {
-  id: string;
-  definitionId: string;
-  status: WorkflowStatus;
-  currentNode: string;
-  data: Record<string, any>;
-  history: WorkflowHistory[];
-}
-```
+3. 🔜 Frontend Integration (Section 5)
 
-### 3.2 Workflow Components
-- Workflow definition management
-- Workflow instance execution
-- Node type implementations:
-  - Approval nodes
-  - Condition nodes
-  - Copy nodes
-  - Processing nodes
-
-### 3.3 Form System
-- Dynamic form definition
-- Form data validation
-- Form rendering data
-
-## 4. Advanced Features (Week 6-7)
-
-### 4.1 Workflow Features
-- Conditional routing
-- Multi-level approval
-- Parallel processing
-- Dynamic assignment
-
-### 4.2 Business Rules
-- Rule engine implementation
-- Condition evaluation
-- Dynamic routing
-
-### 4.3 Event System
-```typescript
-interface WorkflowEvent {
-  type: EventType;
-  workflowId: string;
-  nodeId: string;
-  data: any;
-  timestamp: Date;
-}
-```
-
-## 5. Integration & Testing (Week 8)
-
-### 5.1 Frontend Integration
-- API alignment with frontend
-- CORS setup
-- Response format standardization
-
-### 5.2 Testing Strategy
-- Unit tests for core components
-- Integration tests for workflows
-- API endpoint testing
-- Performance testing
-
-### 5.3 Documentation
-- API documentation
-- Workflow configuration guide
-- Deployment guide
-
-## 6. Deployment & DevOps (Week 9)
-
-### 6.1 Development Environment
-- Docker setup
-- Environment configuration
-- Database migration strategy
-
-### 6.2 Monitoring & Logging
-- Error tracking
-- Performance monitoring
-- Audit logging
-
-## 7. API Endpoints Structure
-
-### 7.1 Authentication
-```
-POST   /api/auth/login
-POST   /api/auth/logout
-POST   /api/auth/refresh
-```
-
-### 7.2 Organization
-```
-GET    /api/users
-POST   /api/users
-GET    /api/departments
-POST   /api/departments
-GET    /api/roles
-POST   /api/roles
-```
-
-### 7.3 Workflow
-```
-GET    /api/workflows
-POST   /api/workflows
-GET    /api/workflows/:id/instances
-POST   /api/workflows/:id/instances
-POST   /api/workflows/instances/:id/approve
-POST   /api/workflows/instances/:id/reject
-```
-
-## 8. Development Guidelines
-
-### 8.1 Code Style
-- Follow TypeScript best practices
-- Use async/await for asynchronous operations
-- Implement proper error handling
-- Write comprehensive comments
-
-### 8.2 Security Considerations
-- Input validation
-- Authentication tokens
-- Rate limiting
-- Data encryption
-
-### 8.3 Performance Optimization
-- Database indexing
-- Caching strategy
-- Query optimization
-- Batch processing
-
-## 9. Timeline & Milestones
-
-### Phase 1 (Week 1-3)
-- Project setup
-- Core authentication
-- Basic organization structure
-
-### Phase 2 (Week 4-5)
-- Workflow engine core
-- Basic workflow operations
-- Form system implementation
-
-### Phase 3 (Week 6-7)
-- Advanced workflow features
-- Business rules implementation
-- Event system
-
-### Phase 4 (Week 8-9)
-- Testing & documentation
-- Frontend integration
-- Deployment setup
-
-## 10. Next Steps
-
-1. Set up development environment
-2. Create basic project structure
-3. Implement core authentication
-4. Begin workflow engine development
-
-Would you like to proceed with any specific part of this plan?
+Next Steps:
+1. Start implementing the Process Execution system:
+   - Design and implement Task model
+   - Create workflow instance handling
+   - Implement task assignment logic
+   - Add approval/rejection handling
+2. Add comprehensive tests for process execution
+3. Begin frontend integration testing
